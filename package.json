@@ -1,0 +1,24 @@
+{
+  "name": "reference-processor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha --recursive",
+    "process": "node ./src/consumer.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.16.1",
+    "dotenv": "^4.0.0",
+    "eventstore-node": "^0.1.2",
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "karma": "^1.7.0",
+    "mocha": "^3.4.1",
+    "sinon": "^2.2.0"
+  }
+}
