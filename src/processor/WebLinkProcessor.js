@@ -21,7 +21,7 @@ module.exports = {
 
             AWS.config.update(config);
 
-            const image = "../../images/" + reference.uuid + ".png"
+            const image = "/tmp/" + reference.uuid + ".png"
             const file = fs.createWriteStream(image, {encoding: 'binary'});
             webshot(reference.reference)
                 .on('data', (data) => {
