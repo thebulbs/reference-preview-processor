@@ -9,18 +9,6 @@ module.exports = {
 
         return new Promise((resolve, reject) => {
 
-            let config = {
-                region: 'eu-central-1',
-            }
-
-            // FIXME: this looks weird
-            if (process.env.ACCESS_KEY_ID && process.env.SECRET_ACCESS_KEY) {
-                config.accessKeyId = process.env.ACCESS_KEY_ID
-                config.secretAccessKey = process.env.SECRET_ACCESS_KEY
-            }
-
-            AWS.config.update(config);
-
             const image = "/tmp/" + reference.uuid + ".png"
             const file = fs.createWriteStream(image, {encoding: 'binary'});
             webshot(reference.reference)
