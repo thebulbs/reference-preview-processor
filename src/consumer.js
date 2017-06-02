@@ -1,12 +1,21 @@
-const client = require('eventstore-node')
-const knowledge = require('./adapter/knowledge')
+const client = require('node-eventstore-client')
+const processor = require('./processor/WebLinkProcessor')
 const config = require('./config')
 
-const eventAppeared = (subscription, event) => {
-    knowledge.store(
-        event.originalEvent.eventType,
-        JSON.parse(event.originalEvent.data.toString())
-    )
+const validData = function (data) {
+
+    return data.hasOwnProperty("reference") &&
+        data.reference.hasOwnProperty("reference") &&
+        data.reference.reference.startsWith("http")
+}
+
+const eventAppeared = (stream, event) => {
+    const data = JSON.parse(event.originalEvent.data.toString())
+    validData(data) ? processor.process(data.reference) : null
+}
+
+const liveProcessingStarted = () => {
+    console.log("Caught up with previously stored events. Listening for new events.")
 }
 
 const subscriptionDropped = (subscription, reason, error) =>
@@ -20,33 +29,26 @@ const settings = {
 const endpoint = config.eventstore.endpoint
 const connection = client.createConnection(settings, endpoint)
 
-connection.on('heartbeatInfo', heartbeatInfo => {
-    console.log('Connected to endpoint', heartbeatInfo.remoteEndPoint)
-    console.log('Heartbeat latency', heartbeatInfo.responseReceivedAt - heartbeatInfo.requestSentAt)
-})
+connection.connect().catch(err => console.log(err))
 
 connection.once("connected", tcpEndPoint => {
-    console.log(`Connected to eventstore at ${tcpEndPoint.host}:${tcpEndPoint.port}`)
-    connection.connectToPersistentSubscription(
-        'reference',
-        'bulb',
+    const subscription = connection.subscribeToStreamFrom(
+        "reference",
+        null,
+        true,
         eventAppeared,
+        liveProcessingStarted,
         subscriptionDropped,
         credentials
     )
+    console.log(`Connected to eventstore at ${tcpEndPoint.host}:${tcpEndPoint.port}`)
+    console.log(`subscription.isSubscribedToAll: ${subscription.isSubscribedToAll}`)
 })
 
-connection.on("error", error =>
-    console.log(`Error occurred on connection: ${error}`)
+connection.on("error", err =>
+    console.log(`Error occurred on connection: ${err}`)
 )
 
-connection.on("closed", reason => {
+connection.on("closed", reason =>
     console.log(`Connection closed, reason: ${reason}`)
-})
-
-
-connection.connect().catch((err) => {
-    console.log(err)
-})
-
-
+)

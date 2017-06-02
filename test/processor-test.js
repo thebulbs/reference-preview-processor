@@ -4,7 +4,11 @@ const sinon = require('sinon')
 const assert = require('chai').assert
 const config = require('../src/config')
 
-describe('Knowledge Adapter', function () {
+describe('Webseite Preview Processor', function () {
+
+    // takes some time currently to upload the image
+    // should be rmeoved once mocked
+    this.timeout(10000)
 
     let sandbox
 
@@ -16,18 +20,24 @@ describe('Knowledge Adapter', function () {
         sandbox.restore()
     })
 
-    it('should load preview image of url', () => {
+    it('should load preview image of url', (done) => {
 
-        let reference = {
-            reference: 'http://localhost:8081/#/',
-            uuid: '9cc094c2-3e12-4b15-9d69-3cfe6240f6b7',
+        let event = {
+            reference: {
+                reference: 'http://www.google.de',
+                uuid: '9cc094c2-3e12-4b15-9d69-3cfe6240f6b7',
+            },
             bulb: {
                 summary: 'asdasd',
                 uuid: '8cc094c2-3e12-4b15-9d69-3cfe6240f6b7',
             }
         }
 
-        Processor.process("addReference", reference)
+        Processor.process("addReference", event).then(() => {
+            done()
+        }).catch((err) => {
+            done(err)
+        })
         // check if file exists
 
     })
