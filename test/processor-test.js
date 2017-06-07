@@ -23,22 +23,27 @@ describe('Webseite Preview Processor', function () {
     it('should load preview image of url', (done) => {
 
         let event = {
-            reference: {
-                reference: 'http://www.google.de',
-                uuid: '9cc094c2-3e12-4b15-9d69-3cfe6240f6b7',
+            data: {
+                reference : {
+                    reference: "asd",
+                    uuid: "123-123-123"
+                },
+                bulb : {
+                    summary: 'asdasd',
+                    uuid: '9cc094c2-3e12-4b15-9d69-3cfe6240f6b7'
+                }
             },
-            bulb: {
-                summary: 'asdasd',
-                uuid: '8cc094c2-3e12-4b15-9d69-3cfe6240f6b7',
+            auth: {
+                user: "123",
+                token: "token"
             }
         }
 
-        Processor.process("addReference", event).then(() => {
+        Processor.process(event).then(() => {
             done()
         }).catch((err) => {
             done(err)
         })
-        // check if file exists
 
     })
 
