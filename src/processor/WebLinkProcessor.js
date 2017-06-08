@@ -5,12 +5,12 @@ var fs = require('fs')
 
 module.exports = {
 
-    process: (event) => {
+    process: (reference) => {
 
         return new Promise((resolve, reject) => {
-            const image = "/tmp/" + event.data.reference.uuid + ".png"
+            const image = "/tmp/" + reference.uuid + ".png"
             const file = fs.createWriteStream(image, {encoding: 'binary'});
-            webshot(event.data.reference.reference)
+            webshot(reference.reference)
                 .on('data', (data) => {
                     file.write(data.toString('binary'), 'binary');
                 })
@@ -22,7 +22,7 @@ module.exports = {
                         var params = {
                             Bucket: "brain-mapper",
                             ACL: 'public-read',
-                            Key: 'references/' + event.data.reference.uuid + ".png",
+                            Key: 'references/' + reference.uuid + ".png",
                             Body: base64data
                         }
                         s3.upload(params, function (err, data) {

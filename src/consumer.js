@@ -10,8 +10,8 @@ const validData = function (data) {
 }
 
 const eventAppeared = (stream, event) => {
-    const data = JSON.parse(event.originalEvent.data.toString())
-    validData(data) ? processor.process(data.reference) : null
+    const event = JSON.parse(event.originalEvent.data.toString())
+    validData(event.data) ? processor.process(event.data.reference) : null
 }
 
 const liveProcessingStarted = () => {
