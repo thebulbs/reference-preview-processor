@@ -3,14 +3,13 @@ const processor = require('./processor/WebLinkProcessor')
 const config = require('./config')
 
 const validData = function (data) {
-
     return data.hasOwnProperty("reference") &&
         data.reference.hasOwnProperty("reference") &&
         data.reference.reference.startsWith("http")
 }
 
-const eventAppeared = (stream, event) => {
-    const event = JSON.parse(event.originalEvent.data.toString())
+const eventAppeared = (stream, payload) => {
+    const event = JSON.parse(payload.originalEvent.data.toString())
     validData(event.data) ? processor.process(event.data.reference) : null
 }
 
